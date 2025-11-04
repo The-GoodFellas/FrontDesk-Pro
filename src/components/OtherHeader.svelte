@@ -15,14 +15,10 @@
             <i class="fa-solid fa-bars"></i>
         </button>
         <nav class="hidden md:flex items-center gap-4 lg:gap-6">
-            <a href="/check-in-out" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Check In/Out</a>
-           <a href="/reservations" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Bookings/Reservations</a>
-           <a href="/rooms" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Rooms</a>
-           <a href="/reports" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Reports</a>
+            <a href="/" class="duration-200 hover:text-indigo-400
+            cursor-pointer">Back</a>
+        <a href="/" class="duration-200 hover:text-indigo-400
+        cursor-pointer" aria-label="Log Out">Log Out</a>
         </nav>
     </div>
 </header>

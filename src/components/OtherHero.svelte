@@ -1,12 +1,10 @@
 <script>
-    import CTAs from "./CTAs.svelte";
-    import Header from "./Header.svelte";
+    import OtherHeader from "./OtherHeader.svelte";
     import SectionWrapper from "./SectionWrapper.svelte";
 
 
 </script>
 
 <SectionWrapper>
-    <Header />
-    <CTAs />
+    <OtherHeader />
 </SectionWrapper>
