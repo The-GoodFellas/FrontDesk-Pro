@@ -120,7 +120,7 @@
 
             <div class="flex gap-6">
                 <!-- Center scrollable box -->
-                <div class="flex-1 bg-white rounded-lg shadow-lg p-6 ml-4">
+                <div class="flex-1 bg-white rounded-lg shadow-lg p-6">
                     <div class="h-[calc(100vh-14rem)] overflow-y-auto pr-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {#each rooms as room}
