@@ -19,8 +19,8 @@
         </a>
     </button>
     <button class="specialBtnDark w-48 h-12">
-        <a href="/reports">
-        <nav class="text-base sm:text-lg md:text-xl">Reports</nav>
+        <a href="/database">
+        <nav class="text-base sm:text-lg md:text-xl">Database</nav>
         </a>
     </button>
 </div>
