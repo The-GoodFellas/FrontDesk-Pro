@@ -49,13 +49,20 @@ button:focus-visible {
     border-color: #646cff;
 }
 
+.specialBtn:hover {
+    border-color: blue; 
+    background-color: #e0f0ff; 
+    color: #003366; 
+}
+
 .specialBtnDark {
     background: #646cff;
     color: white;
 }
 
-.specialBtn:hover {
-    border-color: blue;
+.specialBtnDark:hover {
+    background: #4a52c9; 
+    color: #e0e0e0; 
 }
 
 .dropShadow {
