@@ -70,19 +70,18 @@
         else priceSort = null;
     }
 
-    $: filteredRooms = rooms
-        .filter(room =>
-            (statusFilter === 'all' || room.status === statusFilter) &&
-            (!typeFilter || room.type.toLowerCase() === typeFilter)
-        );
+    $: filteredRooms = rooms.filter(room =>
+    (statusFilter === 'all' || room.status === statusFilter) &&
+    (!typeFilter || room.type.toLowerCase() === typeFilter?.toLowerCase())
+);
 
-    $: sortedRooms = priceSort
-        ? [...filteredRooms].sort((a, b) => {
-            const priceA = parseInt(a.price.replace('$', ''));
-            const priceB = parseInt(b.price.replace('$', ''));
-            return priceSort === 'asc' ? priceA - priceB : priceB - priceA;
-        })
-        : filteredRooms;
+$: sortedRooms = priceSort
+    ? [...filteredRooms].sort((a, b) => {
+        const priceA = parseInt(a.price.replace('$', ''));
+        const priceB = parseInt(b.price.replace('$', ''));
+        return priceSort === 'asc' ? priceA - priceB : priceB - priceA;
+    })
+    : filteredRooms;
 </script>
 
 <div class="min-h-screen bg-gray-100 p-8">
@@ -132,7 +131,7 @@
                 <div class="flex-1 bg-white rounded-lg shadow-lg p-6">
                     <div class="h-[calc(100vh-14rem)] overflow-y-auto pr-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {#each filteredRooms as room}
+                            {#each sortedRooms as room}
                                 <div class="p-4 border rounded-lg hover:shadow-md transition-shadow">
                                     <h3 class="text-lg font-semibold">Room {room.number}</h3>
                                     <p class="text-sm text-gray-600">{room.type}</p>
@@ -169,6 +168,7 @@
                         class="w-full bg-white hover:bg-blue-50 text-blue-600 font-semibold py-2 px-4 rounded shadow"
                         on:click={() => setTypeFilter('suite')}>
                         Suite
+                    </button>
                 </div>
             </div>
         </div>
