@@ -52,28 +52,37 @@
         { number: "510", status: "Available", type: "Suite", price: "$200" },
     ];
 
-    let priceSort = null; // null = no sort, 'asc' = ascending, 'desc' = descending
+    let statusFilter = 'all'; // e.g., 'Available', 'Occupied', 'Reserved', or 'all'
+    let typeFilter = null; // 'Single', 'Double', 'Suite', or null
+    let priceSort = null; // 'asc', 'desc', or null
 
-    function filterRooms(status) {
-        // Filter functionality to be implemented
-        console.log(`Filtering by ${status}`);
+    function setTypeFilter(type) {
+        typeFilter = type;
     }
 
-    function sortRooms(sortBy) {
-        // Sort functionality to be implemented
-        console.log(`Sorting by ${sortBy}`);
+    function setStatusFilter(status) {
+        statusFilter = status;
     }
 
     function togglePriceSort() {
-        if (priceSort === null) {
-            priceSort = 'desc';
-        } else if (priceSort === 'desc') {
-            priceSort = 'asc';
-        } else {
-            priceSort = null;
-        }
-        console.log(`Sorting by price: ${priceSort}`);
+        if (priceSort === null) priceSort = 'desc';
+        else if (priceSort === 'desc') priceSort = 'asc';
+        else priceSort = null;
     }
+
+    $: filteredRooms = rooms
+        .filter(room =>
+            (statusFilter === 'all' || room.status === statusFilter) &&
+            (!typeFilter || room.type.toLowerCase() === typeFilter)
+        );
+
+    $: sortedRooms = priceSort
+        ? [...filteredRooms].sort((a, b) => {
+            const priceA = parseInt(a.price.replace('$', ''));
+            const priceB = parseInt(b.price.replace('$', ''));
+            return priceSort === 'asc' ? priceA - priceB : priceB - priceA;
+        })
+        : filteredRooms;
 </script>
 
 <div class="min-h-screen bg-gray-100 p-8">
@@ -82,22 +91,22 @@
         <div class="w-48 space-y-4 mt-[4.5rem]">
             <button 
                 class="w-full bg-white hover:bg-indigo-50 text-indigo-600 font-semibold py-2 px-4 rounded shadow"
-                on:click={() => filterRooms('all')}>
+                on:click={() => setStatusFilter('all')}>
                 All Rooms
             </button>
             <button 
                 class="w-full bg-white hover:bg-green-50 text-green-600 font-semibold py-2 px-4 rounded shadow"
-                on:click={() => filterRooms('available')}>
+                on:click={() => setStatusFilter('Available')}>
                 Available
             </button>
             <button 
                 class="w-full bg-white hover:bg-red-50 text-red-600 font-semibold py-2 px-4 rounded shadow"
-                on:click={() => filterRooms('occupied')}>
+                on:click={() => setStatusFilter('Occupied')}>
                 Occupied
             </button>
             <button 
                 class="w-full bg-white hover:bg-purple-50 text-purple-600 font-semibold py-2 px-4 rounded shadow"
-                on:click={() => filterRooms('reserved')}>
+                on:click={() => setStatusFilter('Reserved')}>
                 Reserved
             </button>
         </div>
@@ -109,7 +118,7 @@
                 <button 
                     class="text-gray-700 hover:text-indigo-600 font-semibold py-2 px-4 flex items-center gap-2"
                     on:click={togglePriceSort}>
-                    Sort by Price
+                    Sort by Price 
                     {#if priceSort === 'desc'}
                         <i class="fa-solid fa-arrow-down"></i>
                     {:else if priceSort === 'asc'}
@@ -123,7 +132,7 @@
                 <div class="flex-1 bg-white rounded-lg shadow-lg p-6">
                     <div class="h-[calc(100vh-14rem)] overflow-y-auto pr-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {#each rooms as room}
+                            {#each filteredRooms as room}
                                 <div class="p-4 border rounded-lg hover:shadow-md transition-shadow">
                                     <h3 class="text-lg font-semibold">Room {room.number}</h3>
                                     <p class="text-sm text-gray-600">{room.type}</p>
@@ -143,19 +152,23 @@
                 <div class="w-48 space-y-4">
                     <button 
                         class="w-full bg-white hover:bg-blue-50 text-blue-600 font-semibold py-2 px-4 rounded shadow"
-                        on:click={() => sortRooms('single')}>
+                        on:click={() => setTypeFilter(null)}>
+                        All Types
+                    </button>
+                    <button 
+                        class="w-full bg-white hover:bg-blue-50 text-blue-600 font-semibold py-2 px-4 rounded shadow"
+                        on:click={() => setTypeFilter('single')}>
                         Single
                     </button>
                     <button 
                         class="w-full bg-white hover:bg-blue-50 text-blue-600 font-semibold py-2 px-4 rounded shadow"
-                        on:click={() => sortRooms('double')}>
+                        on:click={() => setTypeFilter('double')}>
                         Double
                     </button>
                     <button 
                         class="w-full bg-white hover:bg-blue-50 text-blue-600 font-semibold py-2 px-4 rounded shadow"
-                        on:click={() => sortRooms('suite')}>
+                        on:click={() => setTypeFilter('suite')}>
                         Suite
-                    </button>
                 </div>
             </div>
         </div>
