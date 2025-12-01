@@ -39,9 +39,9 @@
 
     <div class="max-w-5xl mx-auto w-full p-6">
         <div class="flex items-center justify-between mb-6">
-            <h1 class="text-2xl font-semibold">Reservations</h1>
+            <h1 class="text-2xl font-semibold">Bookings</h1>
             <div class="flex gap-2">
-                <button class="border px-4 py-2 rounded" on:click={() => goto('/rooms')}>Browse Rooms</button>            </div>
+                <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Browse Rooms</button>            </div>
         </div>
 
         {#if activeTab === 'list'}
@@ -50,7 +50,7 @@
 
         {#if activeTab === 'confirm'}
             <div class="bg-white p-6 rounded shadow">
-                <h2 class="text-xl font-semibold">Confirm booking for Room {selectedRoom}</h2>
+                <h1 class="text-xl font-semibold">Confirm booking for <span class="text-indigo-400"> Room {selectedRoom}</span></h1>
                 <p class="mt-2 text-sm text-gray-600">Please confirm the booking details for the selected room.</p>
 
                 {#if selectedStatus !== 'Available'}
@@ -114,8 +114,23 @@
                         </div>
 
                         <div class="mt-4 flex gap-3">
-                            <button class="border px-4 py-2 rounded" on:click={confirmBooking}>Confirm Booking</button>
-                            <button class="border px-4 py-2 rounded" on:click={() => goto('/rooms')}>Cancel</button>
+                            <button
+                                type="button"
+                                class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                on:click={confirmBooking}
+                                disabled={!canConfirm}
+                                aria-label="Confirm booking"
+                            >
+                                Confirm Booking
+                            </button>
+
+                            <button
+                                type="button"
+                                class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                                on:click={() => goto('/rooms')}
+                            >
+                                Cancel
+                            </button>
                         </div>
                         {#if !canConfirm}
                             <p class="mt-2 text-sm text-red-600">Please enter guest name and valid check-in/out dates (check-in ≤ check-out).</p>

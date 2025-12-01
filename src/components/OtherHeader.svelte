@@ -16,7 +16,7 @@
         </button>
         <nav class="hidden md:flex items-center gap-4 lg:gap-6">
             <a href="/" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Back</a>
+            cursor-pointer">Home</a>
         <a href="/" class="duration-200 hover:text-indigo-400
         cursor-pointer" aria-label="Log Out">Log Out</a>
         </nav>
