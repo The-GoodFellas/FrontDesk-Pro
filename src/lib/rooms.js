@@ -54,3 +54,10 @@ export const rooms = [
 export function findRoom(number) {
     return rooms.find(r => String(r.number) === String(number));
 }
+
+export function setRoomStatus(number, status) {
+    const room = rooms.find(r => String(r.number) === String(number));
+    if (room) {
+        room.status = status;
+    }
+}

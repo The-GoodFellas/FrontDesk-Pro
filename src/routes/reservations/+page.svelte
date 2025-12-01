@@ -5,7 +5,7 @@
 
     let selectedRoom = null;
     $: selectedRoom = $page.url.searchParams.get('room');
-    import { findRoom } from '$lib/rooms.js';
+    import { findRoom, setRoomStatus } from '$lib/rooms.js';
 
     let selectedStatus = null;
     $: selectedStatus = $page.url.searchParams.get('status');
@@ -31,6 +31,8 @@
         // Simulate booking persistence
         booking = { room: selectedRoom, guestName, checkIn, checkOut };
         confirmed = true;
+        // Update room status; stay on this page to show confirmation
+        setRoomStatus(selectedRoom, 'Reserved');
     }
 </script>
 
@@ -64,8 +66,9 @@
                             Booking confirmed for room {booking.room}.
                             <div class="text-sm text-gray-700 mt-2">Guest: {booking.guestName}<br />{booking.checkIn} → {booking.checkOut}</div>
                         </div>
-                        <div class="mt-4">
-                            <button class="border px-4 py-2 rounded" on:click={() => goto('/reservations')}>Done</button>
+                        <div class="mt-4 flex gap-3">
+                            <button class="border px-4 py-2 rounded" on:click={() => goto('/rooms')}>Back to Rooms</button>
+                            <button class="border px-4 py-2 rounded" on:click={() => goto('/reservations')}>Make Another Booking</button>
                         </div>
                     {:else}
                         <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
