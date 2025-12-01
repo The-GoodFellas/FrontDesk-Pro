@@ -1,56 +1,5 @@
 <script>
-    let rooms = [
-        { number: "101", status: "Available", type: "Single", price: "$100" },
-        { number: "102", status: "Occupied", type: "Double", price: "$150" },
-        { number: "103", status: "Available", type: "Suite", price: "$200" },
-        { number: "104", status: "Reserved", type: "Single", price: "$100" },
-        { number: "105", status: "Available", type: "Double", price: "$150" },
-        { number: "106", status: "Reserved", type: "Suite", price: "$200" },
-        { number: "107", status: "Occupied", type: "Single", price: "$100" },
-        { number: "108", status: "Available", type: "Double", price: "$150" },
-        { number: "109", status: "Occupied", type: "Suite", price: "$200" },
-        { number: "110", status: "Available", type: "Single", price: "$100" },
-        { number: "201", status: "Occupied", type: "Suite", price: "$200" },
-        { number: "202", status: "Available", type: "Single", price: "$100" },
-        { number: "203", status: "Reserved", type: "Double", price: "$150" },
-        { number: "204", status: "Available", type: "Suite", price: "$200" },
-        { number: "205", status: "Occupied", type: "Single", price: "$100" },
-        { number: "206", status: "Reserved", type: "Double", price: "$150" },
-        { number: "207", status: "Available", type: "Suite", price: "$200" },
-        { number: "208", status: "Occupied", type: "Single", price: "$100" },
-        { number: "209", status: "Reserved", type: "Double", price: "$150" },
-        { number: "210", status: "Available", type: "Suite", price: "$200" },
-        { number: "301", status: "Available", type: "Single", price: "$100" },
-        { number: "302", status: "Occupied", type: "Double", price: "$150" },
-        { number: "303", status: "Reserved", type: "Suite", price: "$200" },
-        { number: "304", status: "Available", type: "Single", price: "$100" },
-        { number: "305", status: "Occupied", type: "Double", price: "$150" },
-        { number: "306", status: "Available", type: "Suite", price: "$200" },
-        { number: "307", status: "Reserved", type: "Single", price: "$100" },
-        { number: "308", status: "Available", type: "Double", price: "$150" },
-        { number: "309", status: "Occupied", type: "Suite", price: "$200" },
-        { number: "310", status: "Available", type: "Single", price: "$100" },
-        { number: "401", status: "Reserved", type: "Double", price: "$150" },
-        { number: "402", status: "Available", type: "Suite", price: "$200" },
-        { number: "403", status: "Occupied", type: "Single", price: "$100" },
-        { number: "404", status: "Available", type: "Double", price: "$150" },
-        { number: "405", status: "Occupied", type: "Suite", price: "$200" },
-        { number: "406", status: "Available", type: "Single", price: "$100" },
-        { number: "407", status: "Occupied", type: "Double", price: "$150" },
-        { number: "408", status: "Reserved", type: "Suite", price: "$200" },
-        { number: "409", status: "Available", type: "Single", price: "$100" },
-        { number: "410", status: "Occupied", type: "Double", price: "$150" },
-        { number: "501", status: "Available", type: "Suite", price: "$200" },
-        { number: "502", status: "Reserved", type: "Single", price: "$100" },
-        { number: "503", status: "Available", type: "Double", price: "$150" },
-        { number: "504", status: "Occupied", type: "Suite", price: "$200" },
-        { number: "505", status: "Reserved", type: "Single", price: "$100" },
-        { number: "506", status: "Available", type: "Double", price: "$150" },
-        { number: "507", status: "Occupied", type: "Suite", price: "$200" },
-        { number: "508", status: "Available", type: "Single", price: "$100" },
-        { number: "509", status: "Reserved", type: "Double", price: "$150" },
-        { number: "510", status: "Available", type: "Suite", price: "$200" },
-    ];
+    import { rooms } from '$lib/rooms.js';
 
     let statusFilter = 'all'; // e.g., 'Available', 'Occupied', 'Reserved', or 'all'
     let typeFilter = null; // 'Single', 'Double', 'Suite', or null
@@ -132,16 +81,21 @@ $: sortedRooms = priceSort
                     <div class="h-[calc(100vh-14rem)] overflow-y-auto pr-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {#each sortedRooms as room}
-                                <div class="p-4 border rounded-lg hover:shadow-md transition-shadow">
-                                    <h3 class="text-lg font-semibold">Room {room.number}</h3>
-                                    <p class="text-sm text-gray-600">{room.type}</p>
-                                    <p class="text-sm font-medium" class:text-green-600={room.status === "Available"}
-                                                                 class:text-red-600={room.status === "Occupied"}
-                                                                 class:text-purple-600={room.status === "Reserved"}>
-                                        {room.status}
-                                    </p>
-                                    <p class="text-sm text-gray-800 mt-1">{room.price}/night</p>
-                                </div>
+                                {#if room.status === 'Available'}
+                                    <a href={`/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open booking for room ${room.number}`}>
+                                        <h3 class="text-lg font-semibold">Room {room.number}</h3>
+                                        <p class="text-sm text-gray-600">{room.type}</p>
+                                        <p class="text-sm font-medium text-green-600">{room.status}</p>
+                                        <p class="text-sm text-gray-800 mt-1">{room.price}/night</p>
+                                    </a>
+                                {:else}
+                                    <div class="p-4 border rounded-lg opacity-60 cursor-not-allowed select-none">
+                                        <h3 class="text-lg font-semibold">Room {room.number}</h3>
+                                        <p class="text-sm text-gray-600">{room.type}</p>
+                                        <p class="text-sm font-medium" class:text-red-600={room.status === "Occupied"} class:text-purple-600={room.status === "Reserved"}>{room.status}</p>
+                                        <p class="text-sm text-gray-800 mt-1">{room.price}/night</p>
+                                    </div>
+                                {/if}
                             {/each}
                         </div>
                     </div>
