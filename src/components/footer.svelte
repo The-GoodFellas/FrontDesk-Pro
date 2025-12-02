@@ -15,8 +15,7 @@
         <div class="flex flex-col gap-4">
             <p class="font-bold poppins text-base sm:text-lg">Support</p>
             <a
-                href=""
-                target="_blank"
+                href="/contact_us"
                 class="cursor-pointer hover:text-indigo-400 duration-200"
             >
                 Contact Us</a
@@ -25,8 +24,7 @@
         <div class="flex flex-col gap-4">
             <p class="font-bold poppins text-base sm:text-lg">Company</p>
             <a
-                href=""
-                target="_blank"
+                href="/about_us"
                 class="cursor-pointer hover:text-indigo-400 duration-200"
             >
                 About Us</a
@@ -35,15 +33,13 @@
     <div class="flex flex-col gap-4">
         <p class="font-bold poppins text-base sm:text-lg">Legal</p>
         <a
-            href=""
-            target="_blank"
+            href="/privacy_policy"
             class="cursor-pointer hover:text-indigo-400 duration-200"
         >
             Privacy Policy</a
         >
         <a
-            href=""
-            target="_blank"
+            href="/tos"
             class="cursor-pointer hover:text-indigo-400 duration-200"
         >
             Terms of Service</a
