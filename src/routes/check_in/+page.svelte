@@ -1,18 +1,23 @@
 <script>
     import OtherHeader from "../../components/OtherHeader.svelte";
     import { page } from '$app/stores';
+    import { setRoomStatus } from '$lib/rooms.js';
 
     let guestName = '';
     let showNamePrompt = false;
+    let roomNumber = '';
+
+    $: roomNumber = $page.url.searchParams.get('room') || '';
 
     function handleCheckIn() {
         showNamePrompt = true;
     }
 
     function submitCheckIn() {
-        if (guestName.trim()) {
-            // Here you can add logic to process the check-in
-            console.log(`Checked in guest: ${guestName}`);
+        if (guestName.trim() && roomNumber) {
+            // Update room status to Occupied
+            setRoomStatus(roomNumber, 'Occupied');
+            console.log(`Checked in guest: ${guestName} for room ${roomNumber}`);
             guestName = '';
             showNamePrompt = false;
         }
