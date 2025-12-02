@@ -81,21 +81,12 @@ $: sortedRooms = priceSort
                     <div class="h-[calc(100vh-14rem)] overflow-y-auto pr-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {#each sortedRooms as room}
-                                {#if room.status === 'Available'}
-                                    <a href={`/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open booking for room ${room.number}`}>
-                                        <h3 class="text-lg font-semibold">Room {room.number}</h3>
-                                        <p class="text-sm text-gray-600">{room.type}</p>
-                                        <p class="text-sm font-medium text-green-600">{room.status}</p>
-                                        <p class="text-sm text-gray-800 mt-1">{room.price}/night</p>
-                                    </a>
-                                {:else}
-                                    <div class="p-4 border rounded-lg opacity-60 cursor-not-allowed select-none">
-                                        <h3 class="text-lg font-semibold">Room {room.number}</h3>
-                                        <p class="text-sm text-gray-600">{room.type}</p>
-                                        <p class="text-sm font-medium" class:text-red-600={room.status === "Occupied"} class:text-purple-600={room.status === "Reserved"}>{room.status}</p>
-                                        <p class="text-sm text-gray-800 mt-1">{room.price}/night</p>
-                                    </div>
-                                {/if}
+                                <a href={room.status === 'Reserved' ? `/check_in?room=${room.number}&status=${encodeURIComponent(room.status)}` : `/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open details for room ${room.number}`}>
+                                    <h3 class="text-lg font-semibold">Room {room.number}</h3>
+                                    <p class="text-sm text-gray-600">{room.type}</p>
+                                    <p class="text-sm font-medium" class:text-green-600={room.status === "Available"} class:text-red-600={room.status === "Occupied"} class:text-purple-600={room.status === "Reserved"}>{room.status}</p>
+                                    <p class="text-sm text-gray-800 mt-1">{room.price}/night</p>
+                                </a>
                             {/each}
                         </div>
                     </div>
