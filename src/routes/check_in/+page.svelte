@@ -29,7 +29,7 @@
     
     <div class="flex-1 flex items-center justify-center p-8">
         <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
-            <h1 class="text-2xl font-bold text-center mb-6">Check-In</h1>
+            <h1 class="text-2xl font-bold text-center mb-6">Check-In for <span class="text-indigo-400"> Room {roomNumber}</span></h1>
             
             <div class="space-y-4">
                 <button 
