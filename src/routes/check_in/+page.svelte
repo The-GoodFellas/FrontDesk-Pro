@@ -1,11 +1,13 @@
 <script>
     import OtherHeader from "../../components/OtherHeader.svelte";
     import { page } from '$app/stores';
-    import { setRoomStatus } from '$lib/rooms.js';
+    import { setRoomStatus, findRoom } from '$lib/rooms.js';
 
     let guestName = '';
     let showNamePrompt = false;
     let roomNumber = '';
+    let checkInConfirmed = false;
+    $: currentStatus = roomNumber ? (findRoom(roomNumber)?.status || 'Available') : null;
 
     $: roomNumber = $page.url.searchParams.get('room') || '';
 
@@ -20,6 +22,7 @@
             console.log(`Checked in guest: ${guestName} for room ${roomNumber}`);
             guestName = '';
             showNamePrompt = false;
+            checkInConfirmed = true;
         }
     }
 </script>
@@ -28,19 +31,32 @@
     <OtherHeader />
     
     <div class="flex-1 flex items-center justify-center p-8">
-        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full">
+        <div class="bg-white rounded-lg shadow p-8 max-w-md w-full">
             <h1 class="text-2xl font-bold text-center mb-6">Check-In for <span class="text-indigo-400"> Room {roomNumber}</span></h1>
+            {#if checkInConfirmed}
+                <div class="mb-4 p-4 bg-green-50 text-green-800 rounded">
+                    Check-in confirmed for room {roomNumber}.
+                </div>
+            {/if}
             
             <div class="space-y-4">
-                <button 
-                    class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-4 rounded transition-colors"
-                    on:click={handleCheckIn}>
-                    Check In
-                </button>
-                
+                {#if !checkInConfirmed && currentStatus !== 'Occupied'}
+                    <button 
+                        class="w-full px-4 py-3 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                        on:click={handleCheckIn}>
+                        Check In
+                    </button>
+                {:else}
+                    {#if !checkInConfirmed}
+                        <div class="p-3 bg-gray-50 text-gray-700 rounded border">
+                            This room is currently {currentStatus}.
+                        </div>
+                    {/if}
+                {/if}
+
                 <a href="/rooms" class="block w-full">
                     <button 
-                        class="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-3 px-4 rounded transition-colors">
+                        class="w-full px-4 py-3 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200">
                         Back to Rooms
                     </button>
                 </a>
@@ -49,7 +65,7 @@
 
         {#if showNamePrompt}
             <div class="fixed inset-0 bg-gray-300 bg-opacity-50 flex items-center justify-center">
-                <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full mx-4">
+                <div class="bg-white rounded-lg shadow p-6 max-w-sm w-full mx-4">
                     <h2 class="text-xl font-bold mb-4">Guest Name</h2>
                     <input 
                         type="text" 
@@ -60,12 +76,12 @@
                     />
                     <div class="flex gap-2">
                         <button 
-                            class="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded transition-colors"
+                            class="flex-1 px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
                             on:click={() => { showNamePrompt = false; guestName = ''; }}>
                             Cancel
                         </button>
                         <button 
-                            class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-gray-800 font-semibold py-2 px-4 rounded transition-colors"
+                            class="flex-1 px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
                             on:click={submitCheckIn}>
                             Submit
                         </button>
