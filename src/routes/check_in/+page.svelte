@@ -4,7 +4,7 @@
     import { setRoomStatus, findRoom } from '$lib/rooms.js';
 
     let guestName = '';
-    let showNamePrompt = false;
+    let confirmPrompt = false;
     let roomNumber = '';
     let checkInConfirmed = false;
     $: currentStatus = roomNumber ? (findRoom(roomNumber)?.status || 'Available') : null;
@@ -12,16 +12,15 @@
     $: roomNumber = $page.url.searchParams.get('room') || '';
 
     function handleCheckIn() {
-        showNamePrompt = true;
+        confirmPrompt = true;
     }
 
     function submitCheckIn() {
         if (guestName.trim() && roomNumber) {
-            // Update room status to Occupied
             setRoomStatus(roomNumber, 'Occupied');
             console.log(`Checked in guest: ${guestName} for room ${roomNumber}`);
             guestName = '';
-            showNamePrompt = false;
+            confirmPrompt = false;
             checkInConfirmed = true;
         }
     }
@@ -63,10 +62,12 @@
             </div>
         </div>
 
-        {#if showNamePrompt}
+        {#if confirmPrompt}
             <div class="fixed inset-0 bg-gray-300 bg-opacity-50 flex items-center justify-center">
                 <div class="bg-white rounded-lg shadow p-6 max-w-sm w-full mx-4">
-                    <h2 class="text-xl font-bold mb-4">Guest Name</h2>
+                    <h2 class="text-xl font-bold mb-2">Confirm Check-In</h2>
+                    <p class="text-sm text-gray-700 mb-2">Confirm check-in for room {roomNumber}.</p>
+                    <label class="block text-sm font-medium mb-1">Guest name</label>
                     <input 
                         type="text" 
                         placeholder="Enter guest name"
@@ -77,13 +78,13 @@
                     <div class="flex gap-2">
                         <button 
                             class="flex-1 px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            on:click={() => { showNamePrompt = false; guestName = ''; }}>
+                            on:click={() => { confirmPrompt = false; guestName = ''; }}>
                             Cancel
                         </button>
                         <button 
                             class="flex-1 px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                            on:click={submitCheckIn}>
-                            Submit
+                            on:click={submitCheckIn} disabled={!guestName.trim()}>
+                            Confirm
                         </button>
                     </div>
                 </div>
