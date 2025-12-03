@@ -7,9 +7,29 @@
     let confirmPrompt = false;
     let roomNumber = '';
     let checkInConfirmed = false;
-    $: currentStatus = roomNumber ? (findRoom(roomNumber)?.status || 'Available') : null;
+    let currentStatus = null;
 
     $: roomNumber = $page.url.searchParams.get('room') || '';
+    $: currentStatus = (() => {
+        const param = $page.url.searchParams.get('status');
+        if (param) return param;
+        const local = roomNumber ? (findRoom(roomNumber)?.status || null) : null;
+        return local;
+    })();
+
+    // Ensure we use live status if needed
+    async function refreshStatus() {
+        if (!roomNumber) return;
+        try {
+            const res = await fetch('/api/rooms');
+            if (!res.ok) return;
+            const data = await res.json();
+            const r = (data.rooms || []).find(r => String(r.number) === String(roomNumber));
+            if (r) currentStatus = r.status;
+        } catch {}
+    }
+
+    refreshStatus();
 
     function handleCheckIn() {
         confirmPrompt = true;
@@ -25,6 +45,7 @@
                 if (!res.ok) throw new Error('Failed to check in');
                 await res.json();
                 setRoomStatus(roomNumber, 'Occupied');
+                currentStatus = 'Occupied';
                 console.log(`Checked in guest: ${guestName} for room ${roomNumber}`);
                 guestName = '';
                 confirmPrompt = false;

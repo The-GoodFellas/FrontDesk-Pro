@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { initSchema, insertBooking, logRoomActivity } from '$lib/db.js';
+import { initSchema, insertBooking, logRoomActivity, setRoomStatusDB } from '$lib/db.js';
 import { setRoomStatus } from '$lib/rooms.js';
 
 export async function POST({ request }) {
@@ -12,6 +12,7 @@ export async function POST({ request }) {
   const id = insertBooking({ room_number, guest_name, check_in_date, check_out_date });
   // Immediately reflect reservation in room status and activity log
   setRoomStatus(room_number, 'Reserved');
+  setRoomStatusDB(room_number, 'Reserved');
   logRoomActivity({ room_number, action: 'reserve', actor_name: guest_name });
   return json({ id });
 }

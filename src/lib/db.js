@@ -21,6 +21,11 @@ export function initSchema() {
     actor_name TEXT NOT NULL,
     occurred_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
+  CREATE TABLE IF NOT EXISTS rooms_status (
+    room_number TEXT PRIMARY KEY,
+    status TEXT NOT NULL,
+    updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
   `;
   db.exec(schema);
 }
@@ -39,6 +44,13 @@ export function logRoomActivity({ room_number, action, actor_name }) {
   );
   const info = stmt.run(room_number, action, actor_name);
   return info.lastInsertRowid;
+}
+
+export function setRoomStatusDB(room_number, status) {
+  const upsert = db.prepare(`INSERT INTO rooms_status (room_number, status)
+    VALUES (?, ?)
+    ON CONFLICT(room_number) DO UPDATE SET status=excluded.status, updated_at=datetime('now')`);
+  upsert.run(room_number, status);
 }
 
 export default db;

@@ -31,11 +31,12 @@ export async function GET() {
     if (last === 'check_in') status = 'Occupied';
     else if (last === 'check_out') status = 'Available';
     else if (last === 'reserve') status = 'Reserved';
+    else if (last === 'cancel') status = 'Available';
 
     const bArr = bookingsByRoom.get(r.number) || [];
     const hasBookingToday = bArr.some(includesToday);
-    // Booking marks Reserved unless explicitly Available via checkout
-    if (hasBookingToday && status !== 'Occupied' && last !== 'check_out') {
+    // Booking marks Reserved unless explicitly Available via checkout or cancel
+    if (hasBookingToday && status !== 'Occupied' && last !== 'check_out' && last !== 'cancel') {
       status = 'Reserved';
     }
     return { ...r, status };

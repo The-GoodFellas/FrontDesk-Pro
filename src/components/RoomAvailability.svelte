@@ -1,6 +1,9 @@
 <script>
     let rooms = [];
     let loading = true;
+    let showPrompt = false;
+    let promptRoom = null;
+    let acting = false;
     
     async function loadRooms() {
         loading = true;
@@ -33,6 +36,43 @@
         if (priceSort === null) priceSort = 'desc';
         else if (priceSort === 'desc') priceSort = 'asc';
         else priceSort = null;
+    }
+
+    function onRoomClick(e, room) {
+        // For reserved rooms, intercept and show action prompt
+        if (room.status === 'Reserved') {
+            e.preventDefault();
+            promptRoom = room;
+            showPrompt = true;
+        }
+    }
+
+    async function proceedCheckIn() {
+        if (!promptRoom) return;
+        const url = `/check_in?room=${promptRoom.number}&status=${encodeURIComponent(promptRoom.status)}`;
+        window.location.href = url;
+    }
+
+    async function cancelReservation() {
+        if (!promptRoom) return;
+        acting = true;
+        try {
+            const res = await fetch('/api/cancel_reservation', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_number: String(promptRoom.number), actor_name: 'Admin' })
+            });
+            if (!res.ok) {
+                console.error('Cancel failed', await res.text());
+            }
+            await loadRooms();
+            showPrompt = false;
+            promptRoom = null;
+        } catch (e) {
+            console.error(e);
+        } finally {
+            acting = false;
+        }
     }
 
     $: filteredRooms = rooms.filter(room =>
@@ -100,7 +140,7 @@ $: sortedRooms = priceSort
                         {/if}
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {#each sortedRooms as room}
-                                <a href={room.status === 'Reserved' ? `/check_in?room=${room.number}&status=${encodeURIComponent(room.status)}` : room.status === 'Occupied' ? `/check_out?room=${room.number}&status=${encodeURIComponent(room.status)}` : `/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open details for room ${room.number}`}>
+                                <a href={room.status === 'Reserved' ? `/check_in?room=${room.number}&status=${encodeURIComponent(room.status)}` : room.status === 'Occupied' ? `/check_out?room=${room.number}&status=${encodeURIComponent(room.status)}` : `/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open details for room ${room.number}`} on:click={(e) => onRoomClick(e, room)}>
                                     <h3 class="text-lg font-semibold">Room {room.number}</h3>
                                     <p class="text-sm text-gray-600">{room.type}</p>
                                     <p class="text-sm font-medium" class:text-green-600={room.status === "Available"} class:text-red-600={room.status === "Occupied"} class:text-purple-600={room.status === "Reserved"}>{room.status}</p>
@@ -138,3 +178,23 @@ $: sortedRooms = priceSort
         </div>
     </div>
 </div>
+
+{#if showPrompt}
+    <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50" role="dialog" aria-modal="true">
+        <div class="bg-white rounded-lg shadow-xl w-full max-w-md p-6">
+            <h2 class="text-xl font-semibold mb-2">Room {promptRoom?.number} is Reserved</h2>
+            <p class="text-gray-600 mb-4">Choose an action to continue:</p>
+            <div class="space-y-3">
+                <button class="w-full bg-white hover:bg-indigo-50 text-indigo-600 font-semibold py-2 px-4 rounded shadow" on:click={proceedCheckIn} disabled={acting}>
+                    Check In
+                </button>
+                <button class="w-full bg-white hover:bg-red-50 text-red-600 font-semibold py-2 px-4 rounded shadow" on:click={cancelReservation} disabled={acting}>
+                    {acting ? 'Cancelling…' : 'Cancel Reservation'}
+                </button>
+                <button class="w-full bg-white hover:bg-gray-50 text-gray-700 font-semibold py-2 px-4 rounded shadow" on:click={() => { showPrompt = false; promptRoom = null; }} disabled={acting}>
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+{/if}

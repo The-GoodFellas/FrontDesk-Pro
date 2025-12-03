@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { initSchema, logRoomActivity } from '$lib/db.js';
+import { initSchema, logRoomActivity, setRoomStatusDB } from '$lib/db.js';
 import { setRoomStatus } from '$lib/rooms.js';
 
 export async function POST({ request }) {
@@ -10,6 +10,7 @@ export async function POST({ request }) {
     return json({ error: 'Missing required fields' }, { status: 400 });
   }
   setRoomStatus(room_number, 'Available');
+  setRoomStatusDB(room_number, 'Available');
   const id = logRoomActivity({ room_number, action: 'check_out', actor_name });
   return json({ id });
 }
