@@ -30,11 +30,11 @@ export async function GET() {
     const last = latestActionByRoom.get(r.number);
     if (last === 'check_in') status = 'Occupied';
     else if (last === 'check_out') status = 'Available';
+    else if (last === 'reserve') status = 'Reserved';
 
     const bArr = bookingsByRoom.get(r.number) || [];
     const hasBookingToday = bArr.some(includesToday);
-    // Booking marks Reserved unless the latest explicit action is a checkout,
-    // in which case we honor Available.
+    // Booking marks Reserved unless explicitly Available via checkout
     if (hasBookingToday && status !== 'Occupied' && last !== 'check_out') {
       status = 'Reserved';
     }
