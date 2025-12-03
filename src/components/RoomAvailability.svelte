@@ -81,7 +81,7 @@ $: sortedRooms = priceSort
                     <div class="h-[calc(100vh-14rem)] overflow-y-auto pr-4">
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {#each sortedRooms as room}
-                                <a href={room.status === 'Reserved' ? `/check_in?room=${room.number}&status=${encodeURIComponent(room.status)}` : `/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open details for room ${room.number}`}>
+                                <a href={room.status === 'Reserved' ? `/check_in?room=${room.number}&status=${encodeURIComponent(room.status)}` : room.status === 'Occupied' ? `/check_out?room=${room.number}&status=${encodeURIComponent(room.status)}` : `/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open details for room ${room.number}`}>
                                     <h3 class="text-lg font-semibold">Room {room.number}</h3>
                                     <p class="text-sm text-gray-600">{room.type}</p>
                                     <p class="text-sm font-medium" class:text-green-600={room.status === "Available"} class:text-red-600={room.status === "Occupied"} class:text-purple-600={room.status === "Reserved"}>{room.status}</p>
