@@ -28,11 +28,25 @@
 
     function confirmBooking() {
         if (!canConfirm) return;
-        // Simulate booking persistence
-        booking = { room: selectedRoom, guestName, checkIn, checkOut };
-        confirmed = true;
-        // Update room status; stay on this page to show confirmation
-        setRoomStatus(selectedRoom, 'Reserved');
+        // Persist booking via API
+        fetch('/api/bookings', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                room_number: selectedRoom,
+                guest_name: guestName,
+                check_in_date: checkIn,
+                check_out_date: checkOut
+            })
+        }).then(async (res) => {
+            if (!res.ok) throw new Error('Failed to create booking');
+            const data = await res.json();
+            booking = { id: data.id, room: selectedRoom, guestName, checkIn, checkOut };
+            confirmed = true;
+            setRoomStatus(selectedRoom, 'Reserved');
+        }).catch((err) => {
+            console.error(err);
+        });
     }
 </script>
 

@@ -1,15 +1,16 @@
 <script>
     import OtherHeader from "../../components/OtherHeader.svelte";
     import { page } from '$app/stores';
-    import { setRoomStatus, findRoom } from '$lib/rooms.js';
+    import { setRoomStatus } from '$lib/rooms.js';
 
     let confirmPrompt = false;
     let guestName = '';
     let roomNumber = '';
     let checkOutConfirmed = false;
-    $: currentStatus = roomNumber ? (findRoom(roomNumber)?.status || 'Available') : null;
+    let currentStatus = null;
 
     $: roomNumber = $page.url.searchParams.get('room') || '';
+    $: currentStatus = $page.url.searchParams.get('status') || null;
 
     function handleCheckOut() {
         confirmPrompt = true;
@@ -17,11 +18,20 @@
 
     function submitCheckOut() {
         if (roomNumber && currentStatus === 'Occupied' && guestName.trim()) {
-            setRoomStatus(roomNumber, 'Available');
-            console.log(`Checked out guest: ${guestName} from room ${roomNumber}`);
-            checkOutConfirmed = true;
-            confirmPrompt = false;
-            guestName = '';
+            fetch('/api/check_out', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_number: roomNumber, actor_name: guestName })
+            }).then(async (res) => {
+                if (!res.ok) throw new Error('Failed to check out');
+                await res.json();
+                setRoomStatus(roomNumber, 'Available');
+                console.log(`Checked out guest: ${guestName} from room ${roomNumber}`);
+                checkOutConfirmed = true;
+                confirmPrompt = false;
+                guestName = '';
+                currentStatus = 'Available';
+            }).catch((err) => console.error(err));
         }
     }
 </script>

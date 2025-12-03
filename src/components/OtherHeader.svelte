@@ -17,6 +17,8 @@
         <nav class="hidden md:flex items-center gap-4 lg:gap-6">
             <a href="/" class="duration-200 hover:text-indigo-400
             cursor-pointer">Home</a>
+            <a href="/rooms" class="duration-200 hover:text-indigo-400 cursor-pointer">Rooms</a>
+            <a href="/activity" class="duration-200 hover:text-indigo-400 cursor-pointer">Activity</a>
         <a href="/" class="duration-200 hover:text-indigo-400
         cursor-pointer" aria-label="Log Out">Log Out</a>
         </nav>

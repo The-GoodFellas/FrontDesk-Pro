@@ -50,3 +50,21 @@ CREATE TABLE ledger_entries (
     note VARCHAR(255),
     CONSTRAINT fk_ledger_res FOREIGN KEY (reservation_id) REFERENCES reservations(reservation_id)
 );
+
+-- SQLite-compatible simple tables for app persistence
+CREATE TABLE IF NOT EXISTS bookings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_number TEXT NOT NULL,
+    guest_name TEXT NOT NULL,
+    check_in_date TEXT NOT NULL,
+    check_out_date TEXT NOT NULL,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS room_activity (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    room_number TEXT NOT NULL,
+    action TEXT NOT NULL, -- 'check_in' | 'check_out'
+    actor_name TEXT NOT NULL,
+    occurred_at TEXT NOT NULL DEFAULT (datetime('now'))
+);

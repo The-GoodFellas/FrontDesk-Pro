@@ -1,5 +1,21 @@
 <script>
-    import { rooms } from '$lib/rooms.js';
+    let rooms = [];
+    let loading = true;
+    
+    async function loadRooms() {
+        loading = true;
+        try {
+            const res = await fetch('/api/rooms');
+            const data = await res.json();
+            rooms = data.rooms || [];
+        } catch (e) {
+            console.error(e);
+        } finally {
+            loading = false;
+        }
+    }
+    
+    loadRooms();
 
     let statusFilter = 'all'; // e.g., 'Available', 'Occupied', 'Reserved', or 'all'
     let typeFilter = null; // 'Single', 'Double', 'Suite', or null
@@ -79,6 +95,9 @@ $: sortedRooms = priceSort
                 <!-- Center scrollable box -->
                 <div class="flex-1 bg-white rounded-lg shadow-lg p-6">
                     <div class="h-[calc(100vh-14rem)] overflow-y-auto pr-4">
+                        {#if loading}
+                            <div class="text-gray-600">Loading rooms...</div>
+                        {/if}
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             {#each sortedRooms as room}
                                 <a href={room.status === 'Reserved' ? `/check_in?room=${room.number}&status=${encodeURIComponent(room.status)}` : room.status === 'Occupied' ? `/check_out?room=${room.number}&status=${encodeURIComponent(room.status)}` : `/reservations?room=${room.number}&status=${encodeURIComponent(room.status)}`} class="block p-4 border rounded-lg hover:shadow-md transition-shadow no-underline hover:no-underline" aria-label={`Open details for room ${room.number}`}>

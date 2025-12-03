@@ -17,11 +17,19 @@
 
     function submitCheckIn() {
         if (guestName.trim() && roomNumber) {
-            setRoomStatus(roomNumber, 'Occupied');
-            console.log(`Checked in guest: ${guestName} for room ${roomNumber}`);
-            guestName = '';
-            confirmPrompt = false;
-            checkInConfirmed = true;
+            fetch('/api/check_in', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ room_number: roomNumber, actor_name: guestName })
+            }).then(async (res) => {
+                if (!res.ok) throw new Error('Failed to check in');
+                await res.json();
+                setRoomStatus(roomNumber, 'Occupied');
+                console.log(`Checked in guest: ${guestName} for room ${roomNumber}`);
+                guestName = '';
+                confirmPrompt = false;
+                checkInConfirmed = true;
+            }).catch((err) => console.error(err));
         }
     }
 </script>
