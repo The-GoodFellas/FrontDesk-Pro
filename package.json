@@ -19,6 +19,7 @@
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.16",
 		"better-sqlite3": "^12.5.0",
+		"sqlite3": "^5.1.7",
 		"tailwindcss": "^4.1.16"
 	}
 }

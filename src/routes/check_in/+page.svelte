@@ -57,42 +57,44 @@
 
 <main class="flex flex-col">
     <OtherHeader />
-    
-    <div class="flex-1 flex items-center justify-center p-8">
-        <div class="bg-white rounded-lg shadow p-8 max-w-md w-full">
-            <h1 class="text-2xl font-bold text-center mb-6">Check-In for <span class="text-indigo-400"> Room {roomNumber}</span></h1>
-            {#if checkInConfirmed}
-                <div class="mb-4 p-4 bg-green-50 text-green-800 rounded">
-                    Check-in confirmed for room {roomNumber}.
-                </div>
-            {/if}
-            
-            <div class="space-y-4">
-                {#if !checkInConfirmed && currentStatus !== 'Occupied'}
-                    <button 
-                        class="w-full px-4 py-3 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                        on:click={handleCheckIn}>
-                        Check In
-                    </button>
-                {:else}
-                    {#if !checkInConfirmed}
-                        <div class="p-3 bg-gray-50 text-gray-700 rounded border">
-                            This room is currently {currentStatus}.
-                        </div>
-                    {/if}
-                {/if}
 
-                <a href="/rooms" class="block w-full">
-                    <button 
-                        class="w-full px-4 py-3 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200">
-                        Back to Rooms
-                    </button>
-                </a>
+    <div class="fixed inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center">
+        <div class="flex-1 flex items-center justify-center p-8">
+            <div class="bg-white rounded-lg shadow p-8 max-w-md w-full">
+                <h1 class="text-2xl font-bold text-center mb-6">Check-In for <span class="text-indigo-400"> Room {roomNumber}</span></h1>
+                {#if checkInConfirmed}
+                    <div class="mb-4 p-4 bg-green-50 text-green-800 rounded">
+                        Check-in confirmed for room {roomNumber}.
+                    </div>
+                {/if}
+                
+                <div class="space-y-4">
+                    {#if !checkInConfirmed && currentStatus !== 'Occupied'}
+                        <button 
+                            class="w-full px-4 py-3 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                            on:click={handleCheckIn}>
+                            Check In
+                        </button>
+                    {:else}
+                        {#if !checkInConfirmed}
+                            <div class="p-3 bg-gray-50 text-gray-700 rounded border">
+                                This room is currently {currentStatus}.
+                            </div>
+                        {/if}
+                    {/if}
+
+                    <a href="/rooms" class="block w-full">
+                        <button 
+                            class="w-full px-4 py-3 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200">
+                            Back to Rooms
+                        </button>
+                    </a>
+                </div>
             </div>
         </div>
 
         {#if confirmPrompt}
-            <div class="fixed inset-0 bg-gray-300 bg-opacity-50 flex items-center justify-center">
+            <div class="fixed inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center">
                 <div class="bg-white rounded-lg shadow p-6 max-w-sm w-full mx-4">
                     <h2 class="text-xl font-bold mb-2">Confirm Check-In</h2>
                     <p class="text-sm text-gray-700 mb-2">Confirm check-in for room {roomNumber}.</p>
