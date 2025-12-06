@@ -1,5 +1,5 @@
 import { json } from '@sveltejs/kit';
-import { initSchema } from '$lib/db.js';
+import { initSchema, cleanupPastBookings } from '$lib/db.js';
 import { rooms as baseRooms } from '$lib/rooms.js';
 
 function includesToday(b) {
@@ -9,6 +9,7 @@ function includesToday(b) {
 
 export async function GET() {
   initSchema();
+  cleanupPastBookings();
   const { default: db } = await import('$lib/db.js');
   const bookings = db.prepare('SELECT * FROM bookings').all();
   const activity = db.prepare('SELECT * FROM room_activity ORDER BY occurred_at ASC').all();
@@ -30,12 +31,12 @@ export async function GET() {
     const last = latestActionByRoom.get(r.number);
     if (last === 'check_in') status = 'Occupied';
     else if (last === 'check_out') status = 'Available';
-    else if (last === 'reserve') status = 'Reserved';
+    // 'reserve' should not flip status immediately; keep current unless booking is active for today
     else if (last === 'cancel') status = 'Available';
 
     const bArr = bookingsByRoom.get(r.number) || [];
     const hasBookingToday = bArr.some(includesToday);
-    // Booking marks Reserved unless explicitly Available via checkout or cancel
+    // Booking marks Reserved for the active date range only
     if (hasBookingToday && status !== 'Occupied' && last !== 'check_out' && last !== 'cancel') {
       status = 'Reserved';
     }

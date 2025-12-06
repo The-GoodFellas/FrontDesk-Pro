@@ -53,4 +53,11 @@ export function setRoomStatusDB(room_number, status) {
   upsert.run(room_number, status);
 }
 
+export function cleanupPastBookings() {
+  // Remove bookings whose check_out_date is strictly before today
+  const today = new Date().toISOString().slice(0,10);
+  const del = db.prepare('DELETE FROM bookings WHERE check_out_date < ?');
+  del.run(today);
+}
+
 export default db;
