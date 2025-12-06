@@ -8,6 +8,9 @@
     let roomNumber = '';
     let checkInConfirmed = false;
     let currentStatus = null;
+    let errorMessage = '';
+    let allowFuzzy = false;
+    let suggestions = [];
 
     $: roomNumber = $page.url.searchParams.get('room') || '';
     $: currentStatus = (() => {
@@ -37,20 +40,30 @@
 
     function submitCheckIn() {
         if (guestName.trim() && roomNumber) {
+            errorMessage = '';
+            suggestions = [];
             fetch('/api/check_in', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ room_number: roomNumber, actor_name: guestName })
+                body: JSON.stringify({ room_number: roomNumber, actor_name: guestName, allow_fuzzy: allowFuzzy })
             }).then(async (res) => {
-                if (!res.ok) throw new Error('Failed to check in');
-                await res.json();
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok) {
+                    errorMessage = data?.error || 'Failed to check in';
+                    suggestions = data?.found || [];
+                    return;
+                }
                 setRoomStatus(roomNumber, 'Occupied');
                 currentStatus = 'Occupied';
                 console.log(`Checked in guest: ${guestName} for room ${roomNumber}`);
                 guestName = '';
                 confirmPrompt = false;
                 checkInConfirmed = true;
-            }).catch((err) => console.error(err));
+                suggestions = [];
+            }).catch((err) => {
+                console.error(err);
+                errorMessage = 'Network error while checking in';
+            });
         }
     }
 </script>
@@ -106,6 +119,27 @@
                         class="w-full px-4 py-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-600"
                         on:keydown={(e) => e.key === 'Enter' && submitCheckIn()}
                     />
+                    <label class="flex items-center gap-2 text-sm mb-3">
+                        <input type="checkbox" bind:checked={allowFuzzy} class="w-4 h-4" />
+                        <span>Allow fuzzy match (partial / nickname)</span>
+                    </label>
+                    {#if errorMessage}
+                        <div class="mb-3 p-3 bg-red-50 text-red-800 rounded border">{errorMessage}</div>
+                        {#if suggestions && suggestions.length}
+                            <div class="mt-2 text-sm text-gray-700">
+                                <div class="font-medium mb-1">Did you mean:</div>
+                                <ul class="space-y-1">
+                                    {#each suggestions as s}
+                                        <li>
+                                            <button class="text-left w-full px-2 py-1 rounded hover:bg-gray-100" on:click={() => { guestName = s.guest_name || s; errorMessage = ''; suggestions = []; }}>
+                                                {s.guest_name || (s.room_number ? `${s.guest_name}` : s)}
+                                            </button>
+                                        </li>
+                                    {/each}
+                                </ul>
+                            </div>
+                        {/if}
+                    {/if}
                     <div class="flex gap-2">
                         <button 
                             class="flex-1 px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200"
