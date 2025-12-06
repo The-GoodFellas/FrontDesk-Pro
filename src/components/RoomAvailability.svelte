@@ -53,6 +53,12 @@
         window.location.href = url;
     }
 
+    async function scheduleFutureBooking() {
+        if (!promptRoom) return;
+        const url = `/reservations?room=${promptRoom.number}&status=Available`;
+        window.location.href = url;
+    }
+
     async function cancelReservation() {
         if (!promptRoom) return;
         acting = true;
@@ -187,6 +193,9 @@ $: sortedRooms = priceSort
             <div class="space-y-3">
                 <button class="w-full bg-white hover:bg-indigo-50 text-indigo-600 font-semibold py-2 px-4 rounded shadow" on:click={proceedCheckIn} disabled={acting}>
                     Check In
+                </button>
+                <button class="w-full bg-white hover:bg-blue-50 text-blue-600 font-semibold py-2 px-4 rounded shadow" on:click={scheduleFutureBooking} disabled={acting}>
+                    Book for a Future Date
                 </button>
                 <button class="w-full bg-white hover:bg-red-50 text-red-600 font-semibold py-2 px-4 rounded shadow" on:click={cancelReservation} disabled={acting}>
                     {acting ? 'Cancelling…' : 'Cancel Reservation'}
