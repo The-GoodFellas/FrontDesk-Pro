@@ -1,11 +1,12 @@
 <script>
     import OtherHeader from "../../components/OtherHeader.svelte";
+    import MiniMonth from "../../components/MiniMonth.svelte";
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
 
     let selectedRoom = null;
     $: selectedRoom = $page.url.searchParams.get('room');
-    import { findRoom, setRoomStatus } from '$lib/rooms.js';
+    import { findRoom } from '$lib/rooms.js';
 
     let selectedStatus = null;
     $: selectedStatus = $page.url.searchParams.get('status');
@@ -20,8 +21,42 @@
     let checkIn = '';
     let checkOut = '';
     let booking = null;
+    let existingBookings = [];
+    let loadingBookings = false;
+    let showMiniIn = false;
+    let showMiniOut = false;
 
-    $: canConfirm = selectedStatus === 'Available' && guestName.trim().length > 0 && checkIn && checkOut && (new Date(checkIn) <= new Date(checkOut));
+    async function loadExistingBookings() {
+        if (!selectedRoom) return;
+        loadingBookings = true;
+        try {
+            const res = await fetch('/api/bookings');
+            const data = await res.json();
+            existingBookings = (data.bookings || []).filter(b => String(b.room_number) === String(selectedRoom));
+        } catch (e) {
+            console.error(e);
+        } finally {
+            loadingBookings = false;
+        }
+    }
+
+    $: selectedRoom, loadExistingBookings();
+
+    function overlapsExisting(ci, co) {
+        if (!ci || !co) return false;
+        const start = new Date(ci);
+        const end = new Date(co);
+        // Treat booking ranges as inclusive of check-in date and exclusive of check-out date
+        for (const b of existingBookings) {
+            const bStart = new Date(b.check_in_date);
+            const bEnd = new Date(b.check_out_date);
+            // overlap if start < bEnd and end > bStart
+            if (start < bEnd && end > bStart) return true;
+        }
+        return false;
+    }
+
+    $: canConfirm = selectedStatus === 'Available' && guestName.trim().length > 0 && checkIn && checkOut && (new Date(checkIn) <= new Date(checkOut)) && !overlapsExisting(checkIn, checkOut);
     $: nights = (checkIn && checkOut) ? Math.max(0, Math.round((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24))) : 0;
     $: nightly = selectedDetails ? parseInt(String(selectedDetails.price).replace(/[^0-9]/g, '')) || 0 : 0;
     $: total = nights > 0 ? `$${nightly * nights}` : null;
@@ -43,7 +78,8 @@
             const data = await res.json();
             booking = { id: data.id, room: selectedRoom, guestName, checkIn, checkOut };
             confirmed = true;
-            setRoomStatus(selectedRoom, 'Reserved');
+            // Reload bookings to update indicators
+            loadExistingBookings();
         }).catch((err) => {
             console.error(err);
         });
@@ -95,12 +131,62 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         <div>
                                             <label class="block text-sm font-medium">Check-in</label>
-                                            <input type="date" bind:value={checkIn} class="mt-1 block w-full border rounded px-3 py-2" />
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" class="mt-1 block w-full border-2 rounded px-3 py-2 border-black ring-1 ring-black text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-black focus:ring-1 text-left" on:click={() => { showMiniIn = !showMiniIn; }} aria-label="Open check-in calendar">
+                                                    {checkIn ? checkIn : 'Select date'}
+                                                </button>
+                                            </div>
+                                            {#if checkIn && checkOut && overlapsExisting(checkIn, checkOut)}
+                                                <div class="mt-1 text-sm text-red-600">Selected dates overlap an existing reservation.</div>
+                                            {/if}
+                                            {#if showMiniIn}
+                                                <div class="mt-2 relative">
+                                                    <!-- Click-away overlay -->
+                                                    <div class="fixed inset-0 z-10" on:click={() => { showMiniIn = false; }}></div>
+                                                    <div class="absolute z-20 bg-white border rounded shadow p-3">
+                                                        <MiniMonth reservedRanges={existingBookings} on:pick={(e) => { checkIn = e.detail.toISOString().slice(0,10); showMiniIn = false; }} />
+                                                    </div>
+                                                </div>
+                                            {/if}
                                         </div>
                                         <div>
                                             <label class="block text-sm font-medium">Check-out</label>
-                                            <input type="date" bind:value={checkOut} class="mt-1 block w-full border rounded px-3 py-2" />
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" class="mt-1 block w-full border-2 rounded px-3 py-2 border-black ring-1 ring-black text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-black focus:ring-1 text-left" on:click={() => { showMiniOut = !showMiniOut; }} aria-label="Open check-out calendar">
+                                                    {checkOut ? checkOut : 'Select date'}
+                                                </button>
+                                            </div>
+                                            {#if checkIn && checkOut && overlapsExisting(checkIn, checkOut)}
+                                                <div class="mt-1 text-sm text-red-600">Selected dates overlap an existing reservation.</div>
+                                            {/if}
+                                            {#if showMiniOut}
+                                                <div class="mt-2 relative">
+                                                    <!-- Click-away overlay -->
+                                                    <div class="fixed inset-0 z-10" on:click={() => { showMiniOut = false; }}></div>
+                                                    <div class="absolute z-20 bg-white border rounded shadow p-3">
+                                                        <MiniMonth reservedRanges={existingBookings} on:pick={(e) => { checkOut = e.detail.toISOString().slice(0,10); showMiniOut = false; }} />
+                                                    </div>
+                                                </div>
+                                            {/if}
                                         </div>
+                                    </div>
+
+                                    <div class="mt-2">
+                                        <label class="block text-sm font-medium">Reserved dates for this room</label>
+                                        {#if loadingBookings}
+                                            <div class="text-sm text-gray-600">Loading reservations…</div>
+                                        {:else if existingBookings.length === 0}
+                                            <div class="text-sm text-gray-600">No future reservations.</div>
+                                        {:else}
+                                            <ul class="text-sm text-gray-700 list-disc pl-5">
+                                                {#each existingBookings as b}
+                                                    <li>{b.check_in_date} to {b.check_out_date}</li>
+                                                {/each}
+                                            </ul>
+                                        {/if}
+                                        {#if overlapsExisting(checkIn, checkOut)}
+                                            <div class="mt-2 p-2 bg-red-50 text-red-700 rounded">Selected dates overlap an existing reservation.</div>
+                                        {/if}
                                     </div>
                                 </div>
 
@@ -150,7 +236,7 @@
                                 </button>
                             </div>
                             {#if !canConfirm}
-                                <p class="mt-2 text-sm text-red-600">Please enter guest name and valid check-in/out dates (check-in ≤ check-out).</p>
+                                <p class="mt-2 text-sm text-red-600">Please enter guest name and valid check-in/out dates (check-in ≤ check-out), and avoid overlapping an existing reservation.</p>
                             {/if}
                         {/if}
                     {/if}
