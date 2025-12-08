@@ -26,7 +26,6 @@
 </script>
 
 <main class="flex flex-col">
-  <OtherHeader />
   <div class="max-w-6xl mx-auto w-full p-6">
     <h1 class="text-2xl font-semibold mb-4">Activity</h1>
     {#if loading}

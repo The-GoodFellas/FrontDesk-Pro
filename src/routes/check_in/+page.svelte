@@ -69,8 +69,6 @@
 </script>
 
 <main class="flex flex-col">
-    <OtherHeader />
-
     <div class="fixed inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center">
         <div class="flex-1 flex items-center justify-center p-8">
             <div class="bg-white rounded-lg shadow p-8 max-w-md w-full">
