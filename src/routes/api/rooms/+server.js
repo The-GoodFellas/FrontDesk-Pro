@@ -15,7 +15,8 @@ export async function GET({ locals }) {
   cleanupPastBookings();
   const { default: db } = await import('$lib/db.js');
   const bookings = db.prepare('SELECT * FROM bookings').all();
-  const activity = db.prepare('SELECT * FROM room_activity ORDER BY occurred_at ASC').all();
+  // Use monotonically increasing id to determine true order of actions
+  const activity = db.prepare('SELECT * FROM room_activity ORDER BY id ASC').all();
 
   const latestActionByRoom = new Map();
   for (const a of activity) {
@@ -30,18 +31,22 @@ export async function GET({ locals }) {
   }
 
   const rooms = baseRooms.map(r => {
-    let status = r.status;
-    const last = latestActionByRoom.get(r.number);
-    if (last === 'check_in') status = 'Occupied';
-    else if (last === 'check_out') status = 'Available';
-    // 'reserve' should not flip status immediately; keep current unless booking is active for today
-    else if (last === 'cancel') status = 'Available';
-
     const bArr = bookingsByRoom.get(r.number) || [];
     const hasBookingToday = bArr.some(includesToday);
-    // Booking marks Reserved for the active date range only
-    if (hasBookingToday && status !== 'Occupied' && last !== 'check_out' && last !== 'cancel') {
+
+    // Derive status with clear precedence
+    let status = 'Available';
+    const last = latestActionByRoom.get(r.number);
+
+    if (last === 'check_in') {
+      status = 'Occupied';
+    } else if (hasBookingToday) {
+      // If room has an active booking today and isn’t currently occupied
       status = 'Reserved';
+    } else if (last === 'check_out' || last === 'cancel') {
+      status = 'Available';
+    } else {
+      status = r.status || 'Available';
     }
     return { ...r, status };
   });
