@@ -6,6 +6,6 @@
 </script>
 
 <main class="flex flex-col">
-    <OtherHeader />
     <RoomAvailability />
+    
 </main>

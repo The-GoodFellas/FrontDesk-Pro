@@ -1,5 +1,9 @@
 <script>
-
+    import { page } from '$app/stores';
+    let user;
+    $effect(() => {
+        user = $page.data?.user || null;
+    });
 </script>
 
 <header class="flex flex-col relative z-20">
@@ -15,10 +19,12 @@
             <i class="fa-solid fa-bars"></i>
         </button>
         <nav class="hidden md:flex items-center gap-4 lg:gap-6">
-           <a href="/reservations" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Bookings/Reservations</a>
-           <a href="/rooms" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Rooms</a>
+                     {#if !user}
+                         <a href="/login" class="duration-200 hover:text-indigo-400 cursor-pointer">Login</a>
+                     {:else}
+                         <span class="text-sm text-gray-600">{user.username}</span>
+                         <a href="/logout" class="duration-200 hover:text-indigo-400 cursor-pointer">Logout</a>
+                     {/if}
         </nav>
     </div>
 </header>

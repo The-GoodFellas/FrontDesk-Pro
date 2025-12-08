@@ -24,6 +24,7 @@
 	"dependencies": {
 		"@tailwindcss/vite": "^4.1.16",
 		"better-sqlite3": "^12.5.0",
+		"bcryptjs": "^2.4.3",
 		"sqlite3": "^5.1.7",
 		"tailwindcss": "^4.1.16"
 	}
