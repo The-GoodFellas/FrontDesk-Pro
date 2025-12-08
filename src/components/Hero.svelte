@@ -1,6 +1,5 @@
 <script>
     import CTAs from "./CTAs.svelte";
-    import Header from "./Header.svelte";
     import SectionWrapper from "./SectionWrapper.svelte";
     import Footer from "./Footer.svelte";
 
@@ -8,7 +7,6 @@
 </script>
 
 <SectionWrapper>
-    <Header />
 <div
     class="flex flex-col gap-10 flex-1 items-center justify-center pb-10 md:pb-14"
 >

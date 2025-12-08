@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import bcrypt from 'bcryptjs';
 import path from 'path';
 
 const dbPath = path.resolve('db', 'frontdesk.sqlite');
@@ -26,8 +27,27 @@ export function initSchema() {
     status TEXT NOT NULL,
     updated_at TEXT NOT NULL DEFAULT (datetime('now'))
   );
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    username TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    role TEXT NOT NULL DEFAULT 'STAFF',
+    email TEXT,
+    created_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
   `;
   db.exec(schema);
+
+  // Seed an admin user if none exist
+  const count = db.prepare('SELECT COUNT(*) AS c FROM users').get().c;
+  if (count === 0) {
+    const hash = bcrypt.hashSync('admin123', 10);
+    db.prepare('INSERT INTO users (username, password_hash, role, email) VALUES (?, ?, ?, ?)')
+      .run('admin', hash, 'ADMIN', 'admin@example.com');
+    const staffHash = bcrypt.hashSync('test1234', 10);
+    db.prepare('INSERT INTO users (username, password_hash, role, email) VALUES (?, ?, ?, ?)')
+      .run('staff', staffHash, 'STAFF', 'staff@example.com');
+  }
 }
 
 export function insertBooking({ room_number, guest_name, check_in_date, check_out_date }) {
