@@ -1,5 +1,4 @@
 <script>
-    import OtherHeader from "../../components/OtherHeader.svelte";
     import { page } from '$app/stores';
     import { setRoomStatus, findRoom } from '$lib/rooms.js';
 

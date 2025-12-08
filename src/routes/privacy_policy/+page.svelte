@@ -31,7 +31,7 @@
                         <li>To manage reservations, check‑ins, and room status updates.</li>
                         <li>To maintain accurate records for front‑desk operations.</li>
                         <li>To enhance the product experience and support users.</li>
-                    </ul>
+    
                 </section>
 
                 <section>

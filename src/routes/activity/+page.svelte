@@ -1,5 +1,4 @@
 <script>
-  import OtherHeader from "../../components/OtherHeader.svelte";
   let bookings = [];
   let activity = [];
   let loading = true;

@@ -1,5 +1,4 @@
 <script>
-    import OtherHeader from "../../components/OtherHeader.svelte";
     import Footer from "../../components/Footer.svelte";
     export let form;
 
@@ -7,7 +6,7 @@
 </script>
 
 <main class="flex flex-col">
-    <OtherHeader />
+    
     <section class="max-w-5xl mx-auto w-full p-6">
         <div class="bg-white p-6 rounded shadow">
             <h1 class="text-3xl font-semibold text-indigo-400">Contact Us</h1>

@@ -1,5 +1,13 @@
 <script>
     import { page } from '$app/stores';
+    import { goto } from '$app/navigation';
+
+    async function logout() {
+        try {
+            await fetch('/api/auth?action=logout', { method: 'POST' });
+        } catch (_) {}
+        goto('/');
+    }
 </script>
 
 <header class="flex flex-col relative z-20">
@@ -19,7 +27,7 @@
                         {#if $page.data.user}
                             <a href="/rooms" class="duration-200 hover:text-indigo-400 cursor-pointer">Rooms</a>
                             <a href="/activity" class="duration-200 hover:text-indigo-400 cursor-pointer">Activity</a>
-                            <a href="/logout" class="duration-200 hover:text-indigo-400 cursor-pointer" aria-label="Log Out">Log Out</a>
+                              <a href="/" on:click|preventDefault={logout} class="duration-200 hover:text-indigo-400 cursor-pointer" aria-label="Log Out">Log Out</a>
                         {:else}
                             <a href="/login" class="duration-200 hover:text-indigo-400 cursor-pointer">Login</a>
                         {/if}

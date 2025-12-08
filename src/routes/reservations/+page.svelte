@@ -1,5 +1,4 @@
 <script>
-    import OtherHeader from "../../components/OtherHeader.svelte";
     import MiniMonth from "../../components/MiniMonth.svelte";
     import { page } from '$app/stores';
     import { goto } from '$app/navigation';
