@@ -93,7 +93,9 @@
                     <div class="flex items-center justify-between mb-6">
                         <h1 class="text-2xl font-semibold">Bookings</h1>
                         <div class="flex gap-2">
-                            <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Browse Rooms</button>
+                            {#if !confirmed}
+                                <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Browse Rooms</button>
+                            {/if}
                         </div>
                     </div>
                     <h1 class="text-xl font-semibold">Confirm booking for <span class="text-indigo-400"> Room {selectedRoom}</span></h1>
@@ -112,7 +114,6 @@
                             </div>
                             <div class="mt-4 flex gap-3">
                                 <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Back to Rooms</button>
-                                <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/reservations')}>Make Another Booking</button>
                             </div>
                         {:else}
                             <div class="mt-4 grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
@@ -240,9 +241,7 @@
             {#if activeTab === 'list'}
                 <div class="flex items-center justify-between mb-6">
                     <h1 class="text-2xl font-semibold">Bookings</h1>
-                    <div class="flex gap-2">
-                        <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Browse Rooms</button>
-                    </div>
+                    <div class="flex gap-2"></div>
                 </div>
                 <p class="text-sm text-gray-600">No room selected. Click a room on the Rooms page to start a booking.</p>
             {/if}
