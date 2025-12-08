@@ -1,5 +1,6 @@
+import { defineConfig } from 'vitest/config';
 import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
+import path from 'path';
 import tailwindcss from '@tailwindcss/vite';
 
 export default defineConfig({
@@ -7,4 +8,13 @@ export default defineConfig({
     tailwindcss(),
     sveltekit(),
   ],
+  test: {
+    globals: true,
+    environment: 'node',
+  },
+  resolve: {
+    alias: {
+      '$lib': path.resolve('./src/lib'),
+    }
+  }
 });
