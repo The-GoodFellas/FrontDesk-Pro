@@ -9,6 +9,8 @@
 		"preview": "vite preview",
 		"prepare": "svelte-kit sync || echo ''",
 		"cleanup:past": "node scripts/cleanup_past_reservations.js",
+		"detect:conflicts": "node scripts/detect_conflicts.js",
+		"cleanup:duplicates": "node scripts/cleanup_duplicates.js",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
 		"test:run": "vitest run"

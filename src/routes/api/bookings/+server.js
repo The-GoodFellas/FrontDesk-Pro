@@ -12,6 +12,25 @@ export async function POST({ request, locals }) {
   if (!room_number || !guest_name || !check_in_date || !check_out_date) {
     return json({ error: 'Missing required fields' }, { status: 400 });
   }
+  // Validate date order
+  const inDate = new Date(check_in_date);
+  const outDate = new Date(check_out_date);
+  if (isNaN(inDate) || isNaN(outDate) || inDate >= outDate) {
+    return json({ error: 'Invalid dates: check-out must be after check-in' }, { status: 400 });
+  }
+
+  // Prevent overlapping bookings for the same room
+  const { default: db } = await import('$lib/db.js');
+  const conflictCount = db.prepare(
+    `SELECT COUNT(*) AS c
+     FROM bookings
+     WHERE room_number = ?
+       AND NOT (check_out_date <= ? OR check_in_date >= ?)`
+  ).get(room_number, check_in_date, check_out_date).c;
+  if (conflictCount > 0) {
+    return json({ error: 'Booking conflicts with existing reservation' }, { status: 409 });
+  }
+
   const id = insertBooking({ room_number, guest_name, check_in_date, check_out_date });
   // Log reservation activity for audit trail, but do not mark room
   // as Reserved immediately. Room remains Available until the
