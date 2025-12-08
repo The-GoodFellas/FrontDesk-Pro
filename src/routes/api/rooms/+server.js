@@ -7,8 +7,11 @@ function includesToday(b) {
   return b.check_in_date <= today && b.check_out_date >= today;
 }
 
-export async function GET() {
+export async function GET({ locals }) {
   initSchema();
+  if (!locals.user) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
   cleanupPastBookings();
   const { default: db } = await import('$lib/db.js');
   const bookings = db.prepare('SELECT * FROM bookings').all();

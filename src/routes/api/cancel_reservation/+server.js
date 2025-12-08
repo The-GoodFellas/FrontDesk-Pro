@@ -2,8 +2,11 @@ import { json } from '@sveltejs/kit';
 import { initSchema, logRoomActivity, setRoomStatusDB } from '$lib/db.js';
 import { setRoomStatus } from '$lib/rooms.js';
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
   initSchema();
+  if (!locals.user) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const body = await request.json();
   const { room_number, actor_name, booking_id } = body;
   if (!room_number || !actor_name) {

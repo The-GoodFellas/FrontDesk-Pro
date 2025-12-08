@@ -2,8 +2,11 @@ import { json } from '@sveltejs/kit';
 import { initSchema, insertBooking, logRoomActivity, setRoomStatusDB, cleanupPastBookings } from '$lib/db.js';
 import { setRoomStatus } from '$lib/rooms.js';
 
-export async function POST({ request }) {
+export async function POST({ request, locals }) {
   initSchema();
+  if (!locals.user) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
   const body = await request.json();
   const { room_number, guest_name, check_in_date, check_out_date } = body;
   if (!room_number || !guest_name || !check_in_date || !check_out_date) {
@@ -17,8 +20,11 @@ export async function POST({ request }) {
   return json({ id });
 }
 
-export async function GET() {
+export async function GET({ locals }) {
   initSchema();
+  if (!locals.user) {
+    return json({ error: 'Unauthorized' }, { status: 401 });
+  }
   cleanupPastBookings();
   // Return latest 50 bookings
   const { default: db } = await import('$lib/db.js');

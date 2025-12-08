@@ -1,3 +1,5 @@
+import { redirect } from '@sveltejs/kit';
+
 export const handle = async ({ event, resolve }) => {
   const token = event.cookies.get('fdp_session');
   if (token) {
@@ -9,6 +11,22 @@ export const handle = async ({ event, resolve }) => {
     }
   } else {
     event.locals.user = null;
+  }
+
+  // Protect private routes
+  const protectedPaths = [
+    '/reservations',
+    '/rooms',
+    '/check_in',
+    '/check_out',
+    '/database'
+  ];
+
+  const path = event.url.pathname;
+  const isProtected = protectedPaths.some((p) => path === p || path.startsWith(p + '/'));
+
+  if (isProtected && !event.locals.user) {
+    throw redirect(303, '/login');
   }
 
   return resolve(event);

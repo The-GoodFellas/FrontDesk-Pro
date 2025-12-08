@@ -1,5 +1,5 @@
 <script>
-
+    import { page } from '$app/stores';
 </script>
 
 <header class="flex flex-col relative z-20">
@@ -14,13 +14,15 @@
         <button class="md:hidden grid place-items-center" aria-label="Menu">
             <i class="fa-solid fa-bars"></i>
         </button>
-        <nav class="hidden md:flex items-center gap-4 lg:gap-6">
-            <a href="/" class="duration-200 hover:text-indigo-400
-            cursor-pointer">Home</a>
-            <a href="/rooms" class="duration-200 hover:text-indigo-400 cursor-pointer">Rooms</a>
-            <a href="/activity" class="duration-200 hover:text-indigo-400 cursor-pointer">Activity</a>
-        <a href="/" class="duration-200 hover:text-indigo-400
-        cursor-pointer" aria-label="Log Out">Log Out</a>
-        </nav>
+                <nav class="hidden md:flex items-center gap-4 lg:gap-6">
+                        <a href="/" class="duration-200 hover:text-indigo-400 cursor-pointer">Home</a>
+                        {#if $page.data.user}
+                            <a href="/rooms" class="duration-200 hover:text-indigo-400 cursor-pointer">Rooms</a>
+                            <a href="/activity" class="duration-200 hover:text-indigo-400 cursor-pointer">Activity</a>
+                            <a href="/logout" class="duration-200 hover:text-indigo-400 cursor-pointer" aria-label="Log Out">Log Out</a>
+                        {:else}
+                            <a href="/login" class="duration-200 hover:text-indigo-400 cursor-pointer">Login</a>
+                        {/if}
+                </nav>
     </div>
 </header>
