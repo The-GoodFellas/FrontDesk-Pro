@@ -23,13 +23,17 @@
             <i class="fa-solid fa-bars"></i>
         </button>
                 <nav class="hidden md:flex items-center gap-4 lg:gap-6">
-                        <a href="/" class="duration-200 hover:text-indigo-400 cursor-pointer">Home</a>
+                        {#if $page.url.pathname === '/login' || (!$page.data.user && (['/privacy_policy','/tos','/about_us','/contact_us'].includes($page.url.pathname)))}
+                            <a href="/" class="duration-200 hover:text-indigo-400 cursor-pointer">Home</a>
+                        {/if}
                         {#if $page.data.user}
                             <a href="/rooms" class="duration-200 hover:text-indigo-400 cursor-pointer">Rooms</a>
                             <a href="/activity" class="duration-200 hover:text-indigo-400 cursor-pointer">Activity</a>
                               <a href="/" on:click|preventDefault={logout} class="duration-200 hover:text-indigo-400 cursor-pointer" aria-label="Log Out">Log Out</a>
                         {:else}
-                            <a href="/login" class="duration-200 hover:text-indigo-400 cursor-pointer">Login</a>
+                            {#if $page.url.pathname !== '/login'}
+                                <a href="/login" class="duration-200 hover:text-indigo-400 cursor-pointer">Login</a>
+                            {/if}
                         {/if}
                 </nav>
     </div>

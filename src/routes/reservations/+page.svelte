@@ -88,18 +88,14 @@
 <main class="flex flex-col">
     <div class="fixed inset-0 bg-gray-200 bg-opacity-50 flex items-center justify-center">
         <div class="max-w-5xl mx-auto w-full p-6">
-            <div class="flex items-center justify-between mb-6">
-                <h1 class="text-2xl font-semibold">Bookings</h1>
-                <div class="flex gap-2">
-                    <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Browse Rooms</button>            </div>
-            </div>
-
-            {#if activeTab === 'list'}
-                <p class="text-sm text-gray-600">No room selected. Click a room on the Rooms page to start a booking.</p>
-            {/if}
-
             {#if activeTab === 'confirm'}
-                <div class="bg-white p-6 rounded shadow">
+                <div class="bg-white w-full p-8 md:p-10 rounded shadow -mt-8 relative">
+                    <div class="flex items-center justify-between mb-6">
+                        <h1 class="text-2xl font-semibold">Bookings</h1>
+                        <div class="flex gap-2">
+                            <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Browse Rooms</button>
+                        </div>
+                    </div>
                     <h1 class="text-xl font-semibold">Confirm booking for <span class="text-indigo-400"> Room {selectedRoom}</span></h1>
                     <p class="mt-2 text-sm text-gray-600">Please confirm the booking details for the selected room.</p>
 
@@ -239,6 +235,16 @@
                         {/if}
                     {/if}
                 </div>
+            {/if}
+
+            {#if activeTab === 'list'}
+                <div class="flex items-center justify-between mb-6">
+                    <h1 class="text-2xl font-semibold">Bookings</h1>
+                    <div class="flex gap-2">
+                        <button class="px-4 py-2 rounded shadow-sm border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-200" on:click={() => goto('/rooms')}>Browse Rooms</button>
+                    </div>
+                </div>
+                <p class="text-sm text-gray-600">No room selected. Click a room on the Rooms page to start a booking.</p>
             {/if}
         </div>
     </div>
