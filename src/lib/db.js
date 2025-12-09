@@ -18,6 +18,15 @@ export function initSchema(database = null) {
   );
   CREATE UNIQUE INDEX IF NOT EXISTS idx_bookings_unique_window
     ON bookings (room_number, check_in_date, check_out_date);
+  CREATE TABLE IF NOT EXISTS completed_bookings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    original_booking_id INTEGER,
+    room_number TEXT NOT NULL,
+    guest_name TEXT NOT NULL,
+    check_in_date TEXT NOT NULL,
+    check_out_date TEXT NOT NULL,
+    checked_out_at TEXT NOT NULL DEFAULT (datetime('now'))
+  );
   CREATE TABLE IF NOT EXISTS room_activity (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     room_number TEXT NOT NULL,

@@ -38,13 +38,15 @@ export async function GET({ locals }) {
     let status = 'Available';
     const last = latestActionByRoom.get(r.number);
 
+    // Precedence: explicit recent actions override booking-derived status
     if (last === 'check_in') {
       status = 'Occupied';
+    } else if (last === 'check_out' || last === 'cancel') {
+      // A recent checkout/cancel should mark the room Available even if a booking record still spans today
+      status = 'Available';
     } else if (hasBookingToday) {
       // If room has an active booking today and isn’t currently occupied
       status = 'Reserved';
-    } else if (last === 'check_out' || last === 'cancel') {
-      status = 'Available';
     } else {
       status = r.status || 'Available';
     }

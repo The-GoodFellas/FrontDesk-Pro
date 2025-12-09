@@ -68,8 +68,19 @@ export async function POST({ request, locals }) {
     }
   }
 
+  // Archive the active reservation upon successful checkout
+  try {
+    db.prepare(
+      'INSERT INTO completed_bookings (original_booking_id, room_number, guest_name, check_in_date, check_out_date) VALUES (?, ?, ?, ?, ?)'
+    ).run(booking.id, booking.room_number, booking.guest_name, booking.check_in_date, booking.check_out_date);
+    db.prepare('DELETE FROM bookings WHERE id = ?').run(booking.id);
+  } catch (e) {
+    console.log('check_out: failed to archive/delete booking', e, booking);
+    // Continue, but surface a warning in the response
+  }
+
   setRoomStatus(room_number, 'Available');
   setRoomStatusDB(room_number, 'Available');
   const id = logRoomActivity({ room_number, action: 'check_out', actor_name });
-  return json({ id });
+  return json({ id, archived_booking_id: booking.id });
 }
