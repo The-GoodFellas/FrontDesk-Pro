@@ -55,7 +55,7 @@
         return false;
     }
 
-    $: canConfirm = selectedStatus === 'Available' && guestName.trim().length > 0 && checkIn && checkOut && (new Date(checkIn) <= new Date(checkOut)) && !overlapsExisting(checkIn, checkOut);
+    $: canConfirm = selectedStatus === 'Available' && guestName.trim().length > 0 && checkIn && checkOut && (new Date(checkIn) < new Date(checkOut)) && !overlapsExisting(checkIn, checkOut);
     $: nights = (checkIn && checkOut) ? Math.max(0, Math.round((new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24))) : 0;
     $: nightly = selectedDetails ? parseInt(String(selectedDetails.price).replace(/[^0-9]/g, '')) || 0 : 0;
     $: total = nights > 0 ? `$${nightly * nights}` : null;
@@ -231,7 +231,7 @@
                                 </button>
                             </div>
                             {#if !canConfirm}
-                                <p class="mt-2 text-sm text-red-600">Please enter guest name and valid check-in/out dates (check-in ≤ check-out), and avoid overlapping an existing reservation.</p>
+                                <p class="mt-2 text-sm text-red-600">Please enter guest name and valid check-in/out dates (check-in must be before check-out), and avoid overlapping an existing reservation.</p>
                             {/if}
                         {/if}
                     {/if}
