@@ -17,6 +17,13 @@
     monthDate = new Date(y, m + 1, 1);
   }
 
+  function goToday() {
+    const t = new Date();
+    monthDate = new Date(t.getFullYear(), t.getMonth(), 1);
+    selectedDate = t;
+    dispatch('pick', t);
+  }
+
   function startOfMonth(d) { const x = new Date(d); x.setDate(1); x.setHours(0,0,0,0); return x; }
   function endOfMonth(d) { const x = new Date(d.getFullYear(), d.getMonth()+1, 0); x.setHours(23,59,59,999); return x; }
   function isReserved(date) {
@@ -47,6 +54,7 @@
     <div class="text-xs font-semibold text-gray-700">{monthDate.toLocaleString(undefined, { month: 'short' })} {monthDate.getFullYear()}</div>
     <button class="px-1 py-0.5 text-[11px] rounded border border-gray-300 bg-white text-gray-700 hover:bg-gray-50" on:click={nextMonth} aria-label="Next month">▶</button>
   </div>
+  <!-- Removed top Today button; relocating to footer -->
   <div class="grid grid-cols-7 gap-0.5 text-center text-[10px] text-gray-500 mb-1">
     <div>Su</div><div>Mo</div><div>Tu</div><div>We</div><div>Th</div><div>Fr</div><div>Sa</div>
   </div>
@@ -69,8 +77,17 @@
       {/if}
     {/each}
   </div>
-  <div class="mt-1 flex items-center gap-2 text-[10px] text-gray-600">
-    <span class="inline-block w-3 h-3 rounded bg-gray-200 border border-gray-300"></span> Reserved
+  <div class="mt-1 flex items-center justify-between text-[10px] text-gray-600">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-3 h-3 rounded bg-gray-200 border border-gray-300"></span>
+      <span>Reserved</span>
+    </div>
+    <button
+      class="cursor-pointer text-[10px] text-blue-600 p-0 bg-transparent border-0 outline-none focus:outline-none focus:ring-0"
+      on:click={goToday}
+      aria-label="Go to today">
+      Today
+    </button>
   </div>
 </div>
 
