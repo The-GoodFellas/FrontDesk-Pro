@@ -2,14 +2,32 @@ git# FrontDesk Pro
 
 ## Overview
 
-<img width="1174" height="820" alt="Screenshot 2025-12-08 162954" src="https://github.com/user-attachments/assets/67c5e5eb-df74-4bd5-909b-09801fa3366f" />
-
 FrontDesk Pro is a hotel management system designed to simplify front desk operations. It allows staff and administrators to manage guest check-ins and check-outs, view room availability, create reservations, and maintain hotel records through a secure, role-based system.
+
+## Quick Start (Localhost)
+
+Run the app locally with Vite and SvelteKit.
+
+```powershell
+# From the project root
+npm install
+npm install sqlite3
+npm run dev
+
+# Vite will print a local URL, typically:
+#   http://localhost:5173
+```
+
+### Important: Default Login Credentials
+
+- **Admin:** `username: admin` · `password: admin123`
+- **Staff:** `username: staff` · `password: test1234`
+
+Change these passwords in production. Passwords are stored using bcrypt with cost factor 10.
 
 ## Basic Functionality
 
 * Secure Login: Admins and staff log in with individual accounts. The system verifies credentials before granting access.
-  <img width="518" height="472" alt="Screenshot 2025-12-08 163030" src="https://github.com/user-attachments/assets/74d4b852-3289-4d2d-9de2-7fdab766aa4c" />
 
 * Guest Management: Staff can add, edit, and view guest information such as name, contact details, and stay dates.
   
@@ -33,14 +51,16 @@ Guest (record) - Guest data is stored and linked to room reservations.
 
 ## System Highlights
 
-* Role-based access control ensures data security and limited user access.
-* Centralized database keeps all guest, room, and reservation data consistent.
-* Efficient workflow streamlines hotel operations from check-in to check-out.
-* User-friendly interface for easy and quick adoption.
+- Secure login with bcrypt-hashed passwords; protected routes enforced server-side.
+- Real-time room status: Available, Reserved, Occupied derived from bookings and activity.
+- Booking creation with conflict checks and no same-day check-in/out.
+- Check-in/out flows with name verification (exact/fuzzy) and activity logging.
+- Reservation cancellation with name verification; optional fuzzy match.
+- Cleanup of past bookings and archiving of completed stays for reporting.
+- Simple, fast UI with filters (status/type), price sorting, and inline actions.
 
 ## Future Features
 
-* Guest self-service booking portal.
 * Online payment processing.
 * Email confirmation system.
 * Automated reporting dashboard.
